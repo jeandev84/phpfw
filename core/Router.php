@@ -70,21 +70,33 @@ class Router
      public function resolve()
      {
          $path = $this->request->getPath();
-         $method = $this->request->getMethod();
+         $method = $this->request->method();
          $callback = $this->routes[$method][$path] ?? false;
 
          if($callback === false) {
 
              /* Application::$app->response->setStatusCode(404); */
              $this->response->setStatusCode(404);
-             return "Not found";
+             /* return $this->renderContent("Not found"); */
+             return $this->renderView("errors/_404");
          }
 
          if (is_string($callback)) {
              return $this->renderView($callback);
          }
 
-         return call_user_func($callback);
+
+         if(is_array($callback)) {
+            // on affecte au callback 0 un object
+            /* $callback[0] = new $callback[0](); */
+             Application::$app->controller = new $callback[0]();
+             $callback[0] = Application::$app->controller; // because $this will be calling in not context object
+         }
+
+         /* dump($callback); */
+
+         // callable
+         return call_user_func($callback, $this->request);
      }
 
 
@@ -92,10 +104,10 @@ class Router
      /**
       * @param string $view
      */
-     public function renderView($view)
+     public function renderView($view, $params = [])
      {
          $layoutContent = $this->layoutContent();
-         $viewContent   = $this->renderOnlyView($view);
+         $viewContent   = $this->renderOnlyView($view, $params);
 
          return str_replace("{{content}}", $viewContent, $layoutContent);
 
@@ -103,24 +115,44 @@ class Router
      }
 
 
-     /**
+    /**
+     * @param $viewContent
+     * @return array|false|string|string[]
+    */
+    public function renderContent($viewContent)
+    {
+        $layoutContent = $this->layoutContent();
+        return str_replace("{{content}}", $viewContent, $layoutContent);
+
+        /* include_once Application::$ROOT_DIR. "/views/{$view}.php"; */
+    }
+
+
+
+    /**
       * @return false|string
      */
      protected function layoutContent()
      {
+         $layout = Application::$app->controller->layout;
          ob_start();
-         include_once Application::$ROOT_DIR. "/views/layouts/main.php";
+         include_once Application::$ROOT_DIR. "/views/layouts/{$layout}.php";
          return ob_get_clean();
      }
 
 
-
      /**
       * @param $view
+      * @param $params
       * @return false|string
      */
-     public function renderOnlyView($view)
+     protected function renderOnlyView($view, $params)
      {
+         foreach ($params as $key => $value) {
+             $$key = $value;
+         }
+
+         // extract($params);
          ob_start();
          include_once Application::$ROOT_DIR. "/views/{$view}.php";
          return ob_get_clean();

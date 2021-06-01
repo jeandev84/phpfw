@@ -15,6 +15,7 @@ class Application
      public Router $router;
      public Request $request;
      public Response $response;
+     public Controller $controller;
      public static Application $app;
 
 
@@ -28,6 +29,28 @@ class Application
          $this->request  = new Request();
          $this->response = new Response();
          $this->router   = new Router($this->request, $this->response);
+     }
+
+
+    /**
+     * @return Controller
+    */
+    public function getController(): Controller
+    {
+          return $this->controller;
+    }
+
+
+
+    /**
+     * @param Controller $controller
+     * @return Application
+     */
+     public function setController(Controller $controller): Application
+     {
+         $this->controller = $controller;
+
+         return $this;
      }
 
 
