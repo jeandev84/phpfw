@@ -33,7 +33,7 @@
                 <a class="nav-link" href="/login">Login <span class="sr-only">(current)</span></a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="/register">Contact</a>
+                <a class="nav-link" href="/register">Register</a>
             </li>
         </ul>
     </div>
