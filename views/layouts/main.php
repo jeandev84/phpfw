@@ -1,3 +1,6 @@
+<?php
+use app\core\Application;
+?>
 <!doctype html>
 <html lang="en">
 <head>
@@ -40,6 +43,12 @@
 </nav>
 
 <div class="container">
+    <?php if($message = Application::$app->session->getFlash('success')): ?>
+    <div class="alert alert-success">
+       <?= $message ;?>
+    </div>
+    <?php endif; ?>
+
     {{content}}
 </div>
 

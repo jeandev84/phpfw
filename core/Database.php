@@ -110,6 +110,17 @@ class Database
 
 
     /**
+     * @param $sql
+     * @return false|\PDOStatement
+    */
+    public function prepare($sql)
+    {
+        return $this->pdo->prepare($sql);
+    }
+
+
+
+    /**
      * @param $message
     */
     protected function log($message)
