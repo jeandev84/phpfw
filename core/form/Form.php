@@ -37,10 +37,10 @@ class Form
      /**
       * @param Model $model
       * @param $attribute
-      * @return Field
+      * @return InputField
      */
      public function field(Model $model, $attribute)
      {
-          return new Field($model, $attribute);
+          return new InputField($model, $attribute);
      }
 }

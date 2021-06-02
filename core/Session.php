@@ -28,6 +28,35 @@ class Session
 
     /**
      * @param $key
+     * @param $value
+    */
+    public function set($key, $value)
+    {
+        $_SESSION[$key] = $value;
+    }
+
+
+    /**
+     * @param $key
+     * @return array|mixed
+    */
+    public function get($key)
+    {
+        return $_SESSION[$key] ?? false;
+    }
+
+
+    /**
+     * @param $key
+    */
+    public function remove($key)
+    {
+         unset($_SESSION[$key]);
+    }
+
+
+    /**
+     * @param $key
      * @param $message
     */
     public function setFlash($key, $message)

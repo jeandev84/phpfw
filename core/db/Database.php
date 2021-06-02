@@ -1,10 +1,12 @@
 <?php
-namespace app\core;
+namespace app\core\db;
 
+
+use app\core\Application;
 
 /**
  * Class Database
- * @package app\core
+ * @package app\core\db
 */
 class Database
 {
