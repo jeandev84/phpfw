@@ -12,8 +12,14 @@ use app\core\db\Database;
 */
 class Application
 {
-     const USED_PHP_VERSION = '7.4.3';
 
+     const EVENT_BEFORE_REQUEST = 'beforeRequest';
+     const EVENT_AFTER_REQUEST  = 'afterRequest';
+
+     protected array $eventListeners = [];
+
+
+     public static Application $app;
      public static string $ROOT_DIR;
 
 
@@ -28,7 +34,6 @@ class Application
 
      public Session $session;
      public ?Controller $controller = null;
-     public static Application $app;
 
 
      /**
@@ -61,10 +66,22 @@ class Application
 
 
      /**
+      * @return string
+     */
+     public function versionPHP()
+     {
+         return '7.4.3';
+     }
+
+
+
+     /**
       * Run the application
      */
      public function run()
      {
+         $this->triggerEvent(self::EVENT_BEFORE_REQUEST);
+
          try {
 
              echo $this->router->resolve();
@@ -79,6 +96,27 @@ class Application
      }
 
 
+     /**
+      * @param $eventName
+     */
+     public function triggerEvent($eventName)
+     {
+          $callbacks = $this->eventListeners[$eventName] ?? [];
+          foreach ($callbacks as $callback) {
+              call_user_func($callback);
+          }
+     }
+
+
+
+     /**
+      * @param $eventName
+      * @param $callback
+     */
+     public function on($eventName, $callback)
+     {
+          $this->eventListeners[$eventName][] = $callback;
+     }
 
     /**
      * @return Controller
@@ -127,7 +165,7 @@ class Application
 
 
     /**
-     * @return DbModel|null
+     * @return UserModel|null
     */
     public function getUser()
     {
